@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b0f1a" />
+  <title>Scripture Quest — Read. Streak. Conquer.</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- ONBOARDING -->
+    <section id="onboarding" class="screen onboarding hidden">
+      <div class="onboard-card">
+        <div class="logo-mark">SQ</div>
+        <h1>Scripture Quest</h1>
+        <p class="tagline">Read the Word. Beat your boys. Build the streak.</p>
+
+        <label class="field">
+          <span>Your name</span>
+          <input id="onboard-name" type="text" maxlength="20" placeholder="e.g. Isaac" autocomplete="off" />
+        </label>
+
+        <div class="field">
+          <span>Pick your avatar</span>
+          <div id="avatar-grid" class="avatar-grid"></div>
+        </div>
+
+        <div class="field">
+          <span>Daily goal</span>
+          <div id="goal-grid" class="goal-grid">
+            <button class="goal-pill" data-goal="1">1 chapter<br /><small>Casual</small></button>
+            <button class="goal-pill selected" data-goal="2">2 chapters<br /><small>Regular</small></button>
+            <button class="goal-pill" data-goal="4">4 chapters<br /><small>Beast</small></button>
+            <button class="goal-pill" data-goal="6">6 chapters<br /><small>Disciple</small></button>
+          </div>
+        </div>
+
+        <button id="onboard-start" class="btn btn-primary btn-lg">Start the Quest</button>
+      </div>
+    </section>
+
+    <!-- TOP BAR -->
+    <header id="topbar" class="topbar hidden">
+      <div class="brand">
+        <span class="logo-dot"></span>
+        <span class="brand-name">Scripture Quest</span>
+      </div>
+      <div class="stats-row">
+        <div class="stat" title="Streak">
+          <span class="stat-icon flame">&#x1F525;</span>
+          <span id="stat-streak">0</span>
+        </div>
+        <div class="stat" title="XP">
+          <span class="stat-icon bolt">&#x26A1;</span>
+          <span id="stat-xp">0</span>
+        </div>
+        <div class="stat" title="Hearts">
+          <span class="stat-icon shield">&#x1F6E1;</span>
+          <span id="stat-hearts">3</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- HOME -->
+    <section id="view-home" class="screen view hidden">
+      <div class="hero">
+        <div class="hero-row">
+          <div class="hero-avatar" id="hero-avatar">&#x1F9D4;</div>
+          <div class="hero-text">
+            <div class="hero-greeting" id="hero-greeting">Welcome, soldier.</div>
+            <div class="hero-rank" id="hero-rank">Rank: Squire &middot; Lv 1</div>
+          </div>
+        </div>
+
+        <div class="ring-card">
+          <svg class="ring" viewBox="0 0 120 120" aria-hidden="true">
+            <circle class="ring-bg" cx="60" cy="60" r="52" />
+            <circle id="ring-progress" class="ring-fg" cx="60" cy="60" r="52" />
+          </svg>
+          <div class="ring-center">
+            <div class="ring-num"><span id="ring-done">0</span>/<span id="ring-goal">2</span></div>
+            <div class="ring-label">today</div>
+          </div>
+          <div class="ring-side">
+            <div class="ring-title">Daily Quest</div>
+            <div class="ring-sub" id="ring-sub">Crush your goal to keep the streak alive.</div>
+            <button id="cta-continue" class="btn btn-primary">Continue Reading</button>
+          </div>
+        </div>
+      </div>
+
+      <h2 class="section-title">Today's Quests</h2>
+      <div id="quest-list" class="quest-list"></div>
+
+      <h2 class="section-title">Reading Plans</h2>
+      <div id="plan-grid" class="plan-grid"></div>
+
+      <h2 class="section-title">Recent Badges</h2>
+      <div id="badge-strip" class="badge-strip"></div>
+    </section>
+
+    <!-- READ -->
+    <section id="view-read" class="screen view hidden">
+      <div class="read-header">
+        <button id="back-to-plans" class="btn-ghost">&larr; Plans</button>
+        <div class="read-title">
+          <div id="read-plan-name" class="read-plan-name">Plan</div>
+          <div id="read-ref" class="read-ref">Reference</div>
+        </div>
+        <div class="read-xp">+<span id="read-xp-preview">10</span> XP</div>
+      </div>
+
+      <div id="passage" class="passage"></div>
+
+      <div class="read-actions">
+        <button id="prev-passage" class="btn btn-secondary">&larr; Prev</button>
+        <button id="mark-read" class="btn btn-primary">I Read This &#10003;</button>
+        <button id="next-passage" class="btn btn-secondary">Next &rarr;</button>
+      </div>
+
+      <div class="reflect">
+        <h3>Reflect &amp; Apply</h3>
+        <p id="reflect-prompt">What does this passage tell you about who God is?</p>
+        <textarea id="reflect-input" placeholder="Write your thoughts (optional, +5 XP)"></textarea>
+        <button id="reflect-save" class="btn btn-secondary">Save Reflection</button>
+      </div>
+    </section>
+
+    <!-- LEADERBOARD -->
+    <section id="view-leaderboard" class="screen view hidden">
+      <div class="lb-header">
+        <h2>Leaderboard</h2>
+        <div class="lb-tabs">
+          <button class="lb-tab active" data-tab="weekly">Weekly</button>
+          <button class="lb-tab" data-tab="alltime">All-Time</button>
+          <button class="lb-tab" data-tab="streak">Streak</button>
+        </div>
+      </div>
+
+      <div class="lb-league">
+        <div class="lb-league-name" id="lb-league-name">Bronze League</div>
+        <div class="lb-league-sub" id="lb-league-sub">Top 3 promote on Sunday</div>
+      </div>
+
+      <ol id="lb-list" class="lb-list"></ol>
+
+      <div class="invite-card">
+        <div>
+          <div class="invite-title">Add your boys</div>
+          <div class="invite-sub">Type a name to add a friend to your league.</div>
+        </div>
+        <div class="invite-row">
+          <input id="friend-name" type="text" placeholder="Friend name" maxlength="16" />
+          <button id="add-friend" class="btn btn-primary">Add</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROFILE -->
+    <section id="view-profile" class="screen view hidden">
+      <div class="profile-card">
+        <div class="profile-avatar" id="profile-avatar">&#x1F9D4;</div>
+        <div class="profile-info">
+          <div class="profile-name" id="profile-name">You</div>
+          <div class="profile-rank" id="profile-rank">Squire &middot; Lv 1</div>
+        </div>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi"><div class="kpi-num" id="kpi-streak">0</div><div class="kpi-label">Day Streak</div></div>
+        <div class="kpi"><div class="kpi-num" id="kpi-best">0</div><div class="kpi-label">Best Streak</div></div>
+        <div class="kpi"><div class="kpi-num" id="kpi-chapters">0</div><div class="kpi-label">Chapters Read</div></div>
+        <div class="kpi"><div class="kpi-num" id="kpi-xp">0</div><div class="kpi-label">Total XP</div></div>
+      </div>
+
+      <h2 class="section-title">Achievements</h2>
+      <div id="achievement-grid" class="achievement-grid"></div>
+
+      <h2 class="section-title">Settings</h2>
+      <div class="settings">
+        <label class="setting-row">
+          <span>Daily goal</span>
+          <select id="setting-goal">
+            <option value="1">1 chapter</option>
+            <option value="2">2 chapters</option>
+            <option value="4">4 chapters</option>
+            <option value="6">6 chapters</option>
+            <option value="10">10 chapters</option>
+          </select>
+        </label>
+        <label class="setting-row">
+          <span>Bible translation</span>
+          <select id="setting-translation">
+            <option value="WEB">WEB (default, public domain)</option>
+            <option value="KJV">KJV</option>
+          </select>
+        </label>
+        <button id="reset-progress" class="btn btn-danger">Reset Progress</button>
+      </div>
+    </section>
+
+    <!-- BOTTOM NAV -->
+    <nav id="bottomnav" class="bottomnav hidden">
+      <button class="nav-btn active" data-view="home">
+        <span class="nav-ico">&#x1F3E0;</span><span class="nav-label">Home</span>
+      </button>
+      <button class="nav-btn" data-view="read">
+        <span class="nav-ico">&#x1F4D6;</span><span class="nav-label">Read</span>
+      </button>
+      <button class="nav-btn" data-view="leaderboard">
+        <span class="nav-ico">&#x1F3C6;</span><span class="nav-label">League</span>
+      </button>
+      <button class="nav-btn" data-view="profile">
+        <span class="nav-ico">&#x1F9D4;</span><span class="nav-label">Profile</span>
+      </button>
+    </nav>
+
+    <!-- TOAST / CONFETTI -->
+    <div id="toast" class="toast hidden"></div>
+    <div id="celebrate" class="celebrate hidden">
+      <div class="celebrate-card">
+        <div class="celebrate-emoji" id="celebrate-emoji">&#x1F525;</div>
+        <div class="celebrate-title" id="celebrate-title">Quest Complete!</div>
+        <div class="celebrate-sub" id="celebrate-sub">+20 XP</div>
+        <button id="celebrate-close" class="btn btn-primary">Let's Go</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
