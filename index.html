@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bloom · Klaviyo Growth Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Soft mesh-gradient background blobs -->
+  <div class="mesh">
+    <span class="blob blob--orange"></span>
+    <span class="blob blob--violet"></span>
+    <span class="blob blob--blue"></span>
+    <span class="blob blob--rose"></span>
+  </div>
+
+  <div class="shell">
+    <!-- Sidebar -->
+    <aside class="sidebar glass">
+      <div class="brand">
+        <span class="brand__mark"><i></i><i></i><i></i><i></i><i></i></span>
+        <span class="brand__name">Bloom</span>
+      </div>
+
+      <nav class="nav">
+        <a class="nav__item nav__item--active" href="#"><span class="nav__dot"></span>Overview</a>
+        <a class="nav__item" href="#"><span class="nav__dot"></span>Signup Forms</a>
+        <a class="nav__item" href="#"><span class="nav__dot"></span>Flows</a>
+        <a class="nav__item" href="#"><span class="nav__dot"></span>Campaigns</a>
+        <a class="nav__item" href="#"><span class="nav__dot"></span>Segments</a>
+      </nav>
+
+      <div class="sidebar__foot">
+        <div class="hint glass-soft">
+          <p class="hint__title">Connected</p>
+          <p class="hint__sub">Klaviyo · Live API</p>
+          <span class="hint__pulse"></span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Built for curious marketers</p>
+          <h1 class="title">Smarter Growth, <b>Made Easy</b></h1>
+        </div>
+        <div class="topbar__right">
+          <div class="range glass-soft" id="rangeToggle">
+            <button data-range="7" class="range__btn">7D</button>
+            <button data-range="30" class="range__btn range__btn--on">30D</button>
+            <button data-range="90" class="range__btn">90D</button>
+          </div>
+          <div class="avatar">IN</div>
+        </div>
+      </header>
+
+      <!-- KPI row -->
+      <section class="kpis" id="kpiRow"></section>
+
+      <!-- Hero growth chart -->
+      <section class="grid">
+        <article class="card card--hero glass">
+          <div class="card__head">
+            <div>
+              <p class="card__eyebrow">Signup form performance</p>
+              <h2 class="card__title" id="formTitle">Welcome Pop-Up</h2>
+            </div>
+            <div class="select glass-soft">
+              <select id="formSelect"></select>
+              <span class="select__chev">▾</span>
+            </div>
+          </div>
+
+          <div class="hero__stat">
+            <span class="hero__num" id="heroTotal">—</span>
+            <span class="hero__delta" id="heroDelta">—</span>
+            <span class="hero__label">new subscribers</span>
+          </div>
+
+          <div class="chart">
+            <svg id="growthChart" viewBox="0 0 760 280" preserveAspectRatio="none"></svg>
+            <div class="chart__tip" id="chartTip" hidden></div>
+          </div>
+        </article>
+
+        <article class="card card--side glass">
+          <p class="card__eyebrow">Conversion funnel</p>
+          <h2 class="card__title">Views → Submits</h2>
+          <div class="funnel" id="funnel"></div>
+        </article>
+      </section>
+
+      <!-- Bottom row -->
+      <section class="grid grid--bottom">
+        <article class="card glass">
+          <p class="card__eyebrow">Top signup forms</p>
+          <h2 class="card__title">Ranked by growth</h2>
+          <ul class="ranklist" id="rankList"></ul>
+        </article>
+
+        <article class="card glass">
+          <p class="card__eyebrow">Subscriber sources</p>
+          <h2 class="card__title">Where they came from</h2>
+          <div class="donut">
+            <svg id="donutChart" viewBox="0 0 200 200"></svg>
+            <div class="donut__center">
+              <span id="donutPct">—</span>
+              <small>via forms</small>
+            </div>
+          </div>
+          <ul class="legend" id="donutLegend"></ul>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
