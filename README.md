@@ -28,11 +28,18 @@ the browser. Needs **Node 18+** (no `npm install`).
    cp .env.example .env
    # edit .env -> KLAVIYO_API_KEY=pk_xxxxxxxx
    ```
-3. Start it:
-   ```bash
-   node server.js
-   ```
-4. Open **http://localhost:8000**. The badge now reads **"Live API"**.
+3. Start it — pick one:
+   - **Double-click** `start.command` (macOS/Linux) or `start.bat` (Windows).
+     It launches the server and opens the dashboard automatically.
+   - Or from a terminal: `node server.js`, then open **http://localhost:8000**.
+
+The badge now reads **"Live API"**.
+
+> Why not just open `index.html` with the key in it? Klaviyo blocks
+> private-key requests from the browser (CORS), so reads must go through
+> the local server — and a private key in a committed file would be exposed
+> to anyone with the repo. The launcher keeps it one double-click while the
+> key stays in your git-ignored `.env`.
 
 Live today: form list, per-form **signup growth** chart, and the growth-ranked
 leaderboard. The KPI cards, funnel, and sources donut stay on demo data until
