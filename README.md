@@ -4,7 +4,7 @@ A custom, aesthetic dashboard for visualizing Klaviyo signup-form growth.
 Frosted-glass cards, soft mesh gradients, and hand-built SVG charts (no
 heavyweight chart library). Pure HTML/CSS/JS — no build step.
 
-## Run it
+## Run it (demo data — no setup)
 
 It's a static site. Open `index.html` directly, or serve the folder:
 
@@ -12,6 +12,34 @@ It's a static site. Open `index.html` directly, or serve the folder:
 python3 -m http.server 8000
 # then visit http://localhost:8000
 ```
+
+The sidebar badge will say **"Demo data"** — you're seeing realistic mock numbers.
+
+## Run it with your real Klaviyo data
+
+There's a tiny zero-dependency Node server (`server.js`) that serves the
+dashboard **and** securely proxies Klaviyo so your private key never reaches
+the browser. Needs **Node 18+** (no `npm install`).
+
+1. Get a **Private API key**: Klaviyo → **Settings → API Keys → Create Private
+   API Key** (read-only scopes are enough).
+2. Copy `.env.example` to `.env` and paste your key:
+   ```bash
+   cp .env.example .env
+   # edit .env -> KLAVIYO_API_KEY=pk_xxxxxxxx
+   ```
+3. Start it:
+   ```bash
+   node server.js
+   ```
+4. Open **http://localhost:8000**. The badge now reads **"Live API"**.
+
+Live today: form list, per-form **signup growth** chart, and the growth-ranked
+leaderboard. The KPI cards, funnel, and sources donut stay on demo data until
+those Klaviyo metrics are wired in (each falls back automatically, so nothing
+breaks).
+
+> Your `.env` is git-ignored. Never commit your real key.
 
 ## What it shows
 
