@@ -22,6 +22,13 @@
     signed: (n) => (n >= 0 ? "+" : "") + n.toFixed(1) + "%",
   };
 
+  // delta may be null (a brand-new form with no prior period to compare)
+  function deltaLabel(delta) {
+    if (delta == null) return { text: "New", up: true, arrow: "" };
+    const up = delta >= 0;
+    return { text: (up ? "↑ " : "↓ ") + fmt.signed(delta).replace("-", ""), up, arrow: "" };
+  }
+
   const $ = (s) => document.querySelector(s);
   const el = (tag, attrs) => {
     const n = document.createElementNS(SVGNS, tag);
@@ -68,8 +75,9 @@
     $("#formTitle").textContent = form.name;
     $("#heroTotal").textContent = fmt.int(total);
     const hd = $("#heroDelta");
-    hd.textContent = fmt.signed(delta);
-    hd.style.color = delta >= 0 ? "#1f9d6a" : "#e0556b";
+    const dl = deltaLabel(delta);
+    hd.textContent = dl.text;
+    hd.style.color = dl.up ? "#1f9d6a" : "#e0556b";
 
     const svg = $("#growthChart");
     svg.innerHTML = "";
@@ -178,7 +186,7 @@
     list.innerHTML = "";
     const data = await D.getRanking(state.days);
     data.forEach((r, i) => {
-      const up = r.delta >= 0;
+      const dl = deltaLabel(r.delta);
       const li = document.createElement("li");
       li.className = "rank";
       li.innerHTML = `
@@ -189,7 +197,7 @@
           </div>
           <div class="rank__meta">${fmt.int(r.total)} subscribers</div>
         </div>
-        <div class="rank__chg ${up ? "up" : "down"}">${up ? "↑" : "↓"} ${fmt.signed(r.delta).replace("-", "")}<small>vs prev</small></div>`;
+        <div class="rank__chg ${dl.up ? "up" : "down"}">${dl.text}<small>${r.delta == null ? "form" : "vs prev"}</small></div>`;
       list.appendChild(li);
     });
   }

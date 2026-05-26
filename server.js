@@ -130,7 +130,7 @@ async function growth(formId, days) {
   const series = recent.map((v, i) => ({ date: recentDates[i] || "", value: v || 0 }));
   const total = sum(recent);
   const priorTotal = sum(prior);
-  const delta = priorTotal > 0 ? ((total - priorTotal) / priorTotal) * 100 : 0;
+  const delta = priorTotal > 0 ? ((total - priorTotal) / priorTotal) * 100 : null; // null = new form
   return { form, series, total, delta };
 }
 
@@ -143,7 +143,7 @@ async function ranking(days) {
       const half = Math.floor(s.length / 2);
       const total = sum(s.slice(half));
       const prior = sum(s.slice(0, half));
-      const delta = prior > 0 ? ((total - prior) / prior) * 100 : 0;
+      const delta = prior > 0 ? ((total - prior) / prior) * 100 : null; // null = new form
       return { name: f.name, total, delta, color: f.color };
     })
     .sort((a, b) => b.total - a.total);
