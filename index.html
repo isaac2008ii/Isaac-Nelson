@@ -2,125 +2,70 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bloom · Klaviyo Growth Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0e0f13" />
+  <title>Forge · Workout Tracker</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <!-- Soft mesh-gradient background blobs -->
-  <div class="mesh">
-    <span class="blob blob--orange"></span>
-    <span class="blob blob--violet"></span>
-    <span class="blob blob--blue"></span>
-    <span class="blob blob--rose"></span>
+  <div class="app">
+    <!-- ============ Views ============ -->
+    <main class="screen" id="screen"></main>
+
+    <!-- Resume-active banner -->
+    <button class="resume-bar" id="resumeBar" hidden></button>
+
+    <!-- ============ Bottom navigation ============ -->
+    <nav class="tabbar">
+      <button class="tab tab--on" data-view="home">
+        <svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10"/></svg>
+        <span>Home</span>
+      </button>
+      <button class="tab" data-view="routines">
+        <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+        <span>Routines</span>
+      </button>
+      <button class="tab tab--start" data-action="quick-start">
+        <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+      </button>
+      <button class="tab" data-view="history">
+        <svg viewBox="0 0 24 24"><path d="M12 8v4l3 2M21 12a9 9 0 1 1-9-9 9 9 0 0 1 9 9z"/></svg>
+        <span>History</span>
+      </button>
+      <button class="tab" data-view="stats">
+        <svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
+        <span>Stats</span>
+      </button>
+    </nav>
   </div>
 
-  <div class="shell">
-    <!-- Sidebar -->
-    <aside class="sidebar glass">
-      <div class="brand">
-        <span class="brand__mark"><i></i><i></i><i></i><i></i><i></i></span>
-        <span class="brand__name">Bloom</span>
-      </div>
+  <!-- ============ Active workout overlay ============ -->
+  <section class="logger" id="logger" hidden></section>
 
-      <nav class="nav">
-        <a class="nav__item nav__item--active" href="#"><span class="nav__dot"></span>Overview</a>
-        <a class="nav__item" href="#"><span class="nav__dot"></span>Signup Forms</a>
-        <a class="nav__item" href="#"><span class="nav__dot"></span>Flows</a>
-        <a class="nav__item" href="#"><span class="nav__dot"></span>Campaigns</a>
-        <a class="nav__item" href="#"><span class="nav__dot"></span>Segments</a>
-      </nav>
+  <!-- ============ Exercise picker overlay ============ -->
+  <section class="picker" id="picker" hidden></section>
 
-      <div class="sidebar__foot">
-        <div class="hint glass-soft">
-          <p class="hint__title">Connected</p>
-          <p class="hint__sub">Klaviyo · Live API</p>
-          <span class="hint__pulse"></span>
-        </div>
-      </div>
-    </aside>
+  <!-- ============ Generic modal ============ -->
+  <div class="modal" id="modal" hidden></div>
 
-    <!-- Main -->
-    <main class="main">
-      <header class="topbar">
-        <div>
-          <p class="eyebrow">Built for curious marketers</p>
-          <h1 class="title">Smarter Growth, <b>Made Easy</b></h1>
-        </div>
-        <div class="topbar__right">
-          <div class="range glass-soft" id="rangeToggle">
-            <button data-range="7" class="range__btn">7D</button>
-            <button data-range="30" class="range__btn range__btn--on">30D</button>
-            <button data-range="90" class="range__btn">90D</button>
-          </div>
-          <div class="avatar">IN</div>
-        </div>
-      </header>
-
-      <!-- KPI row -->
-      <section class="kpis" id="kpiRow"></section>
-
-      <!-- Hero growth chart -->
-      <section class="grid">
-        <article class="card card--hero glass">
-          <div class="card__head">
-            <div>
-              <p class="card__eyebrow">Signup form performance</p>
-              <h2 class="card__title" id="formTitle">Welcome Pop-Up</h2>
-            </div>
-            <div class="select glass-soft">
-              <select id="formSelect"></select>
-              <span class="select__chev">▾</span>
-            </div>
-          </div>
-
-          <div class="hero__stat">
-            <span class="hero__num" id="heroTotal">—</span>
-            <span class="hero__delta" id="heroDelta">—</span>
-            <span class="hero__label">new subscribers</span>
-          </div>
-
-          <div class="chart">
-            <svg id="growthChart" viewBox="0 0 760 280" preserveAspectRatio="none"></svg>
-            <div class="chart__tip" id="chartTip" hidden></div>
-          </div>
-        </article>
-
-        <article class="card card--side glass">
-          <p class="card__eyebrow">Conversion funnel</p>
-          <h2 class="card__title">Views → Submits</h2>
-          <div class="funnel" id="funnel"></div>
-        </article>
-      </section>
-
-      <!-- Bottom row -->
-      <section class="grid grid--bottom">
-        <article class="card glass">
-          <p class="card__eyebrow">Top signup forms</p>
-          <h2 class="card__title">Ranked by growth</h2>
-          <ul class="ranklist" id="rankList"></ul>
-        </article>
-
-        <article class="card glass">
-          <p class="card__eyebrow">Subscriber sources</p>
-          <h2 class="card__title">Where they came from</h2>
-          <div class="donut">
-            <svg id="donutChart" viewBox="0 0 200 200"></svg>
-            <div class="donut__center">
-              <span id="donutPct">—</span>
-              <small>via forms</small>
-            </div>
-          </div>
-          <ul class="legend" id="donutLegend"></ul>
-        </article>
-      </section>
-    </main>
+  <!-- ============ Rest timer toast ============ -->
+  <div class="rest" id="rest" hidden>
+    <button class="rest__adj" data-rest="-15">−15</button>
+    <div class="rest__face">
+      <span class="rest__label">REST</span>
+      <span class="rest__time" id="restTime">1:30</span>
+    </div>
+    <button class="rest__adj" data-rest="15">+15</button>
+    <button class="rest__skip" id="restSkip">Skip</button>
   </div>
 
-  <script src="data.js"></script>
+  <!-- ============ Toast ============ -->
+  <div class="toast" id="toast" hidden></div>
+
+  <script src="db.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

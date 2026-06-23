@@ -1,8 +1,11 @@
-# Bloom — Klaviyo Growth Dashboard
+# Forge — Workout Tracker
 
-A custom, aesthetic dashboard for visualizing Klaviyo signup-form growth.
-Frosted-glass cards, soft mesh gradients, and hand-built SVG charts (no
-heavyweight chart library). Pure HTML/CSS/JS — no build step.
+A clean, private, **Hevy-style workout tracker** for daily use — without any
+social features. No accounts, no feed, no followers. Just you, your lifts, and
+a complete memory of everything you've done.
+
+Everything is stored locally in your browser, so it works offline and **never
+forgets what you did the day before**. Pure HTML/CSS/JS — no build step.
 
 ## Run it
 
@@ -13,48 +16,40 @@ python3 -m http.server 8000
 # then visit http://localhost:8000
 ```
 
-## What it shows
+Add it to your phone's home screen for an app-like, full-screen experience.
 
-- **KPI row** — new subscribers, submit rate, AOV, revenue/recipient (with sparklines)
-- **Signup form growth** — smooth animated area chart per form, switchable, with hover tooltips
-- **Conversion funnel** — views → interacted → submitted → confirmed
-- **Top forms** — ranked by growth vs. previous period
-- **Subscriber sources** — donut breakdown
+## What it does
 
-Use the `7D / 30D / 90D` toggle to change the window and the form dropdown to
-switch which signup form the hero chart and funnel describe.
+- **Log workouts live** — add exercises, log each set (weight × reps), tick
+  sets off as you go, with a running timer, set count and volume in the header.
+- **Remembers last time** — when you log an exercise, your previous session's
+  sets are shown next to each row and pre-filled, so you always know what to
+  beat. This is the whole point: it doesn't forget.
+- **Rest timer** — auto-starts when you complete a set, with ±15s and skip.
+- **Routines / templates** — build reusable workout templates and start a full
+  session in one tap, with target sets per exercise.
+- **Exercise library** — 55 built-in exercises across 8 muscle groups, plus
+  your own custom exercises. Search and filter by muscle.
+- **History** — every finished workout is saved forever, with full set detail.
+  Tap any workout to view it, repeat it, or delete it.
+- **Progress & stats** — weekly workout counts, total volume / sets / time,
+  per-exercise estimated-1RM trend charts, and personal records (heaviest,
+  best e1RM, best set volume, most reps).
+- **Resume in progress** — leave mid-workout and a "Resume" bar brings you
+  right back; the active session survives reloads.
+- **Backup** — export all your data to a JSON file and import it back on any
+  device. Switch between kg/lb and set a default rest time.
 
-## Wiring in real Klaviyo data
+## Your data stays yours
 
-The UI reads everything through `window.BloomData` in `data.js`, which
-currently returns realistic **mock** data shaped like Klaviyo's API. To go
-live, replace those methods with calls to *your own backend proxy*.
-
-> ⚠️ Never put a Klaviyo private API key in browser code. Front it with a
-> small server (or serverless function) that holds the key and exposes only
-> the aggregates this dashboard needs.
-
-Relevant Klaviyo endpoints:
-
-- Forms: `GET /api/forms/`
-- Form growth over time: `POST /api/form-reporting/` (or Metric Aggregates
-  for the "Subscribed to List" / form-submit metric, bucketed by day)
-- List/segment size growth: `GET /api/lists/{id}` + Metric Aggregates
-
-Example swap in `data.js`:
-
-```js
-getFormGrowth: async (formId, days) => {
-  const res = await fetch(`/api/bloom/forms/${formId}/growth?days=${days}`);
-  return res.json(); // -> { form, series:[{date,value}], total, delta }
-}
-```
-
-(The render functions in `app.js` would then `await` these calls.)
+Everything lives in `localStorage` on your device under two keys
+(`forge.data.v1` and `forge.active.v1`). Nothing is sent anywhere — there is no
+server and no analytics. Use **Stats → Export** regularly to keep a backup, and
+**Import** to restore or move to another device.
 
 ## Files
 
-- `index.html` — markup / layout
-- `styles.css` — glassmorphism, mesh gradient, responsive grid
-- `data.js` — data layer (mock now, Klaviyo proxy later)
-- `app.js` — rendering + custom SVG charts + interactions
+- `index.html` — app shell (views, bottom tab bar, overlays)
+- `styles.css` — mobile-first dark theme
+- `db.js` — data layer: storage, exercise seed, records & progress math
+- `app.js` — views, the workout logger, exercise picker, charts, rest timer
