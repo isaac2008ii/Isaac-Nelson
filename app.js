@@ -6,6 +6,28 @@
 (function () {
   "use strict";
 
+  // Last-resort safety net: if anything throws, show a tappable recovery
+  // screen instead of leaving the user staring at a black/dead page.
+  window.addEventListener("error", (e) => {
+    let d = document.getElementById("fatal");
+    if (!d) { d = document.createElement("div"); d.id = "fatal"; document.body.appendChild(d); }
+    d.style.cssText =
+      "position:fixed;inset:0;z-index:99999;background:#160b0b;color:#fff;" +
+      "font:14px/1.5 -apple-system,system-ui,sans-serif;padding:28px;overflow:auto;";
+    d.innerHTML =
+      "<h2 style='margin:0 0 8px'>Something glitched</h2>" +
+      "<p style='color:#bbb;margin:0 0 16px'>Tap below to reset and reload. Your saved workouts are kept.</p>" +
+      "<pre style='white-space:pre-wrap;color:#ff9a8a;font-size:12px;background:#000;padding:12px;border-radius:8px'>" +
+      String((e && e.message) || e) + "\n" + ((e && e.filename) || "") + ":" + ((e && e.lineno) || "") +
+      "</pre>" +
+      "<button id='fatalReset' style='margin-top:18px;width:100%;padding:15px;border:none;border-radius:12px;" +
+      "background:#ff5a3c;color:#fff;font-weight:700;font-size:16px'>Reset &amp; reload</button>";
+    d.querySelector("#fatalReset").onclick = () => {
+      try { localStorage.removeItem("forge.active.v1"); } catch (_) {}
+      location.reload();
+    };
+  });
+
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 
@@ -853,7 +875,10 @@
     $("#logger").hidden = true;
     document.body.classList.remove("logging");
     stopTimer();
-    refreshResumeBar();
+    // Re-render the underlying screen. Rewriting #screen forces iOS Safari to
+    // repaint — without this the home view can show as a black/blank screen
+    // after the full-screen logger overlay is dismissed.
+    render();
   }
 
   function finishWorkout() {
