@@ -18,6 +18,11 @@
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+/* The `hidden` attribute must always win. Overlays below set display:flex,
+   which (as an author rule) would otherwise override the UA [hidden] rule and
+   leave them permanently on screen — covering the app with a black panel. */
+[hidden] { display: none !important; }
 html, body { height: 100%; }
 body {
   font-family: "Inter", system-ui, -apple-system, sans-serif;
