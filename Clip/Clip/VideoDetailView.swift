@@ -29,7 +29,11 @@ struct VideoDetailView: View {
                 }
                 .pickerStyle(.segmented)
                 Toggle(isOn: pinBinding) {
-                    Label("Show on widget", systemImage: "star")
+                    Label("Show on widget", systemImage: video.isPinned ? "star.fill" : "star")
+                }
+            } footer: {
+                if !ClipStore.isShared {
+                    Text("⚠️ The widget can't see Clip's videos yet: the App Group isn't set up. In Xcode, check Signing & Capabilities → App Groups on both targets (see the README).")
                 }
             }
 
@@ -103,6 +107,13 @@ struct VideoDetailView: View {
             }
         }
         .scrollDismissesKeyboard(.interactively)
+        .onChange(of: focus) { old, new in
+            // Leaving "Add a shot" any way (Done, tapping elsewhere, swiping down) turns the text into a checkable shot.
+            if old == .newShot, new != .newShot,
+               !newShot.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                addTypedShots(keepTyping: false)
+            }
+        }
         .environment(\.editMode, $editMode)
         .navigationTitle(video.displayTitle)
         .navigationBarTitleDisplayMode(.inline)

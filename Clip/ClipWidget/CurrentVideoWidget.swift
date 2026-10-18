@@ -37,7 +37,8 @@ struct CurrentVideoProvider: TimelineProvider {
     }
 
     private func loadPinnedVideo() -> VideoSnapshot? {
-        let context = ModelContext(ClipStore.shared)
+        guard let container = ClipStore.makeWidgetContainer() else { return nil }
+        let context = ModelContext(container)
         var descriptor = FetchDescriptor<Video>(predicate: #Predicate<Video> { $0.isPinned == true })
         descriptor.fetchLimit = 1
         guard let video = try? context.fetch(descriptor).first else { return nil }
@@ -104,9 +105,9 @@ struct CurrentVideoWidgetView: View {
                     .font(.title2)
                     .foregroundStyle(.tint)
                 Spacer(minLength: 0)
-                Text("No video starred")
+                Text(ClipStore.isShared ? "No video starred" : "Finish setup")
                     .font(.headline)
-                Text("Star a video in Clip to see it here.")
+                Text(ClipStore.isShared ? "Star a video in Clip to see it here." : "Turn on App Groups in Xcode so the widget can see Clip.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
