@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import UIKit
 
 struct VideoDetailView: View {
     @Bindable var video: Video
@@ -12,7 +13,10 @@ struct VideoDetailView: View {
     @State private var writerText: String?
     @State private var editMode: EditMode = .inactive
 
-    private enum Field: Hashable { case title, newShot, notes, link }
+    fileprivate enum Field: Hashable {
+        case title, newShot, notes, link
+        case shot(UUID)
+    }
 
     var body: some View {
         List {
@@ -55,7 +59,7 @@ struct VideoDetailView: View {
 
             Section {
                 ForEach(video.orderedShots) { shot in
-                    ShotRow(shot: shot) { context.saveAndRefresh() }
+                    ShotRow(shot: shot, focus: $focus) { context.saveAndRefresh() }
                 }
                 .onMove(perform: moveShots)
                 .onDelete(perform: deleteShots)
@@ -65,7 +69,7 @@ struct VideoDetailView: View {
                     .submitLabel(.return)
                     .onChange(of: newShot) { _, value in
                         // Return (or saying "new line") adds the shot and keeps the keyboard up for the next one.
-                        if value.contains("\n") { addTypedShots() }
+                        if value.contains("\n") { addTypedShots(keepTyping: true) }
                     }
 
                 Button {
@@ -98,12 +102,16 @@ struct VideoDetailView: View {
                 }
             }
         }
+        .scrollDismissesKeyboard(.interactively)
         .environment(\.editMode, $editMode)
         .navigationTitle(video.displayTitle)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
-                if editMode.isEditing {
+                if focus != nil {
+                    Button("Done", action: finishTyping)
+                        .fontWeight(.semibold)
+                } else if editMode.isEditing {
                     Button("Done") { withAnimation { editMode = .inactive } }
                 } else {
                     Menu {
@@ -123,10 +131,6 @@ struct VideoDetailView: View {
                         Image(systemName: "ellipsis.circle")
                     }
                 }
-            }
-            ToolbarItemGroup(placement: .keyboard) {
-                Spacer()
-                Button("Done") { focus = nil }
             }
         }
         .sheet(isPresented: writerBinding) {
@@ -159,11 +163,22 @@ struct VideoDetailView: View {
         context.saveAndRefresh()
     }
 
-    private func addTypedShots() {
+    private func addTypedShots(keepTyping: Bool) {
         let text = newShot.replacingOccurrences(of: "\n", with: " ")
         newShot = ""
         Actions.addShots(ShotListMaker.split(text), to: video, in: context)
-        focus = .newShot
+        if keepTyping { focus = .newShot }
+    }
+
+    /// Done: keeps whatever was typed or dictated into "Add a shot", then closes the keyboard.
+    private func finishTyping() {
+        if !newShot.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            addTypedShots(keepTyping: false)
+        }
+        focus = nil
+        // Belt and braces: also resign whatever field UIKit thinks is active (e.g. while dictating).
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        context.saveAndRefresh()
     }
 
     private func moveShots(from source: IndexSet, to destination: Int) {
@@ -181,6 +196,7 @@ struct VideoDetailView: View {
 
 private struct ShotRow: View {
     @Bindable var shot: Shot
+    var focus: FocusState<VideoDetailView.Field?>.Binding
     var onChange: () -> Void
 
     var body: some View {
@@ -196,6 +212,7 @@ private struct ShotRow: View {
             .buttonStyle(.borderless)
 
             TextField("Shot", text: $shot.text, axis: .vertical)
+                .focused(focus, equals: .shot(shot.id))
                 .strikethrough(shot.isDone)
                 .foregroundStyle(shot.isDone ? .secondary : .primary)
         }
