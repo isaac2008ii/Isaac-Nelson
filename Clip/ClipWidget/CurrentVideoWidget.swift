@@ -1,4 +1,3 @@
-import SwiftData
 import SwiftUI
 import WidgetKit
 
@@ -37,19 +36,14 @@ struct CurrentVideoProvider: TimelineProvider {
     }
 
     private func loadPinnedVideo() -> VideoSnapshot? {
-        guard let container = ClipStore.makeWidgetContainer() else { return nil }
-        let context = ModelContext(container)
-        var descriptor = FetchDescriptor<Video>(predicate: #Predicate<Video> { $0.isPinned == true })
-        descriptor.fetchLimit = 1
-        guard let video = try? context.fetch(descriptor).first else { return nil }
-        let shots = video.orderedShots
+        guard let saved = WidgetSnapshotStore.read() else { return nil }
         return VideoSnapshot(
-            id: video.id,
-            title: video.displayTitle,
-            status: video.status,
-            shotsLeft: video.shotsLeft,
-            totalShots: shots.count,
-            nextShot: shots.first(where: { !$0.isDone })?.text
+            id: saved.id,
+            title: saved.title,
+            status: VideoStatus(rawValue: saved.statusRaw) ?? .idea,
+            shotsLeft: saved.shotsLeft,
+            totalShots: saved.totalShots,
+            nextShot: saved.nextShot
         )
     }
 }

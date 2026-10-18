@@ -15,13 +15,6 @@ enum ClipStore {
         FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupID) != nil
     }
 
-    /// The widget opens a fresh container each time it redraws, so it never shows stale data.
-    static func makeWidgetContainer() -> ModelContainer? {
-        guard isShared else { return nil }
-        let config = ModelConfiguration(schema: schema, groupContainer: .identifier(appGroupID))
-        return try? ModelContainer(for: schema, configurations: config)
-    }
-
     private static func makeContainer() -> ModelContainer {
         // Prefer the App Group store; fall back to a private store if the group isn't provisioned
         // (the app still works, the widget just won't see your data).
