@@ -100,11 +100,14 @@ enum Actions {
 
     /// Only one video is pinned at a time: it's the one the widget shows.
     static func setPinned(_ video: Video, _ pinned: Bool, in context: ModelContext) {
-        if pinned {
-            let others = (try? context.fetch(FetchDescriptor<Video>(predicate: #Predicate<Video> { $0.isPinned == true }))) ?? []
-            for other in others { other.isPinned = false }
-        }
         video.isPinned = pinned
+        if pinned {
+            // Filter in memory: a predicate fetch can miss changes that haven't been saved yet.
+            let all = (try? context.fetch(FetchDescriptor<Video>())) ?? []
+            for other in all where other.id != video.id && other.isPinned {
+                other.isPinned = false
+            }
+        }
         context.saveAndRefresh()
     }
 
