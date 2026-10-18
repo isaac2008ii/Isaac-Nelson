@@ -19,6 +19,7 @@ struct RootView: View {
         }
         .overlay(alignment: .top) { toast }
         .onOpenURL(perform: handle)
+        .onAppear { context.saveAndRefresh() }
         .onChange(of: scenePhase) { _, phase in
             // Text edits aren't saved on every keystroke; flush them so the widget stays current.
             if phase != .active { context.saveAndRefresh() }

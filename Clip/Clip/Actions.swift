@@ -3,9 +3,21 @@ import SwiftData
 import WidgetKit
 
 extension ModelContext {
-    /// Saves now (the widget reads from disk) and asks the widgets to redraw.
+    /// Saves now, hands the starred video to the widget, and asks the widgets to redraw.
     func saveAndRefresh() {
         try? save()
+        let videos = (try? fetch(FetchDescriptor<Video>())) ?? []
+        WidgetSnapshotStore.write(videos.first(where: \.isPinned).map { video in
+            let shots = video.orderedShots
+            return WidgetSnapshot(
+                id: video.id,
+                title: video.displayTitle,
+                statusRaw: video.statusRaw,
+                shotsLeft: video.shotsLeft,
+                totalShots: shots.count,
+                nextShot: shots.first(where: { !$0.isDone })?.text
+            )
+        })
         WidgetCenter.shared.reloadAllTimelines()
     }
 }
