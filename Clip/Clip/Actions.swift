@@ -40,7 +40,7 @@ enum Actions {
                 .trimmingCharacters(in: .whitespacesAndNewlines)
             item = InboxItem(link: url.absoluteString, note: note)
         } else {
-            item = InboxItem(note: trimmed)
+            item = InboxItem(note: trimmed, purpose: .idea)
         }
         context.insert(item)
         context.saveAndRefresh()
@@ -58,6 +58,35 @@ enum Actions {
         pinIfNothingPinned(video, in: context)
         context.saveAndRefresh()
         return video
+    }
+
+    /// "Add to a video": attaches the link (and note) to an existing video and clears it from the inbox.
+    static func attach(_ item: InboxItem, to video: Video, in context: ModelContext) {
+        if !item.link.isEmpty { addLink(item.link, to: video) }
+        let note = item.note.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !note.isEmpty {
+            video.notes = video.notes.isEmpty ? note : video.notes + "\n" + note
+        }
+        context.delete(item)
+        context.saveAndRefresh()
+    }
+
+    static func addLink(_ link: String, to video: Video) {
+        guard !video.allLinks.contains(link) else { return }
+        if video.link.isEmpty {
+            video.link = link
+        } else {
+            video.extraLinks.append(link)
+        }
+    }
+
+    static func removeLink(_ link: String, from video: Video, in context: ModelContext) {
+        if video.link == link {
+            video.link = video.extraLinks.isEmpty ? "" : video.extraLinks.removeFirst()
+        } else {
+            video.extraLinks.removeAll { $0 == link }
+        }
+        context.saveAndRefresh()
     }
 
     static func newVideo(shots: [String] = [], in context: ModelContext) -> Video {

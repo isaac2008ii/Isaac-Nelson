@@ -30,28 +30,26 @@ struct VideoDetailView: View {
             }
 
             Section("Audio / inspo") {
-                if video.link.isEmpty {
-                    HStack {
-                        TextField("Instagram link", text: $linkDraft)
-                            .focused($focus, equals: .link)
-                            .keyboardType(.URL)
-                            .textInputAutocapitalization(.never)
-                            .autocorrectionDisabled()
-                            .onSubmit { setLink(linkDraft) }
-                        PasteButton(payloadType: String.self) { strings in
-                            DispatchQueue.main.async { setLink(strings.first ?? "") }
-                        }
-                        .labelStyle(.iconOnly)
-                        .buttonBorderShape(.capsule)
-                    }
-                } else {
-                    LinkRow(link: video.link)
+                ForEach(video.allLinks, id: \.self) { link in
+                    LinkRow(link: link)
                         .swipeActions {
                             Button(role: .destructive) {
-                                video.link = ""
-                                context.saveAndRefresh()
+                                Actions.removeLink(link, from: video, in: context)
                             } label: { Label("Remove", systemImage: "trash") }
                         }
+                }
+                HStack {
+                    TextField(video.allLinks.isEmpty ? "Instagram link" : "Add another link", text: $linkDraft)
+                        .focused($focus, equals: .link)
+                        .keyboardType(.URL)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
+                        .onSubmit { addLink(linkDraft) }
+                    PasteButton(payloadType: String.self) { strings in
+                        DispatchQueue.main.async { addLink(strings.first ?? "") }
+                    }
+                    .labelStyle(.iconOnly)
+                    .buttonBorderShape(.capsule)
                 }
             }
 
@@ -154,9 +152,9 @@ struct VideoDetailView: View {
         Binding(get: { writerText != nil }, set: { if !$0 { writerText = nil } })
     }
 
-    private func setLink(_ text: String) {
+    private func addLink(_ text: String) {
         guard let url = LinkParser.firstURL(in: text) else { return }
-        video.link = url.absoluteString
+        Actions.addLink(url.absoluteString, to: video)
         linkDraft = ""
         context.saveAndRefresh()
     }

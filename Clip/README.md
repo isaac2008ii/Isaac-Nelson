@@ -2,8 +2,12 @@
 
 Clip is an iPhone app that works like a to-do list for making videos.
 
-- **Inbox:** copy a link in Instagram (Share → Copy link) and tap **Paste**. A note opens with the keyboard up, so you can tap the mic and dictate *why* you saved it. You can also type or dictate plain ideas.
-- **Videos:** swipe right on an inbox item to **Make video**. Each video card has a title, its Instagram audio or inspo link (tap it to open Instagram), a status (Idea → Filming → Editing → Posted), a shot list you check off, and notes.
+- **Inbox:** copy a link in Instagram (Share → Copy link) and tap **Paste**, in the app or on the widget. Clip asks **"What's this for?"**:
+  - **Audio to use** or **Video idea / inspo** files it under **Audios** or **Ideas & inspo** in your inbox.
+  - **Add to a video** attaches it to one of your video cards.
+  - **Start a new video** turns it into a video card right away.
+  - There's an optional note field you can dictate into. If you close without picking, the link waits under **Unsorted**. You can also type or dictate plain ideas.
+- **Videos:** swipe right on an inbox item to **Make video**. Each video card has a title, its Instagram audio and inspo links (tap one to open Instagram), a status (Idea → Filming → Editing → Posted), a shot list you check off, and notes.
 - **Write it out → shot list:** type or dictate everything you're picturing, as messy as you like. Clip breaks it into separate shots you can edit before adding.
   - On iPhones with Apple Intelligence (iPhone 15 Pro or newer, iOS 26+), it uses Apple's on-device AI. It's free, private, and nothing leaves your phone.
   - On other iPhones, it splits on sentences, new lines, and words like "then" and "next shot".
